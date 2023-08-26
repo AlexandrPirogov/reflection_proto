@@ -8,6 +8,7 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/go-chi/jwtauth/v5"
+	"github.com/rs/cors"
 )
 
 type Handler interface {
@@ -45,7 +46,6 @@ func New(h Handler) *http.Server {
 	r.Use(middleware.AllowContentType("application/json"))
 	r.Use(middleware.Logger)
 	r.Use(compress.GZIPer)
-
 	r.Post("/login", h.Login)
 	r.Post("/register", h.Register)
 
@@ -80,8 +80,9 @@ func New(h Handler) *http.Server {
 		r.Get("/report/{report}", h.ViewReport)
 
 	})
+	v := cors.Default().Handler(r)
 	return &http.Server{
 		Addr:    ":8080",
-		Handler: r,
+		Handler: v,
 	}
 }

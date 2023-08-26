@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"reflection_prototype/internal/core/auth/user"
 	"sync"
+	"time"
 
 	"github.com/go-chi/jwtauth/v5"
 )
@@ -16,7 +17,7 @@ func GenerateJWT(u user.User) string {
 
 	key := u.Login + u.Pwd + u.Email
 	claims := map[string]interface{}{key: u}
-	//jwtauth.SetExpiry(claims, time.Now().Add(time.Second*30))
+	jwtauth.SetExpiry(claims, time.Now().Add(time.Hour*1))
 	semaphore.Lock()
 	_, tokenString, _ := TokenAuth.Encode(claims)
 	authedUsers[tokenString] = u
